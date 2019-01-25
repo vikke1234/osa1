@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
 
@@ -11,44 +11,63 @@ const Header = props => {
 }
 
 const Content = props => {
-  return (
-    <div>
-      <Part p = {props.p1} e = {props.e1} />
-      <Part p = {props.p2} e = {props.e2} />
-      <Part p = {props.p3} e = {props.e3} />
-    </div>
-  )
+  const content = props.p.map(value => <Part p={value} />)
+  return content
 }
 
 const Total = props => {
+  let tot = 0
+  props.p.map(value => (tot += value.exercises))
   return (
     <div>
-      <p>yhteensä {props.e1 + props.e2 + props.e3} tehtävää</p>
+      <p>yhteensä {tot} tehtävää</p>
     </div>
   )
 }
 
 const Part = props => {
   return (
-    <p>
-      {props.p} {props.e}
-    </p>
+    <div>
+      {props.p.name} {props.p.exercises}
+    </div>
   )
 }
 
-const App = () => {
-  const course = 'Half Stack -sovelluskehitys'
-  const part1 = 'Reactin perusteet'
-  const exercises1 = 10
-  const part2 = 'Tiedonvälitys propseilla'
-  const exercises2 = 7
-  const part3 = 'Komponenttien tila'
-  const exercises3 = 14
+const Course = props => {
   return (
     <div>
-      <Header header={course} />
-      <Content p1={part1} e1={exercises1} p2={part2} e2={exercises2} p3 = {part3} e3 = {exercises3} />
-      <Total e1={exercises1} e2={exercises2} e3={exercises3} />
+      <Header header={props.course.name} />
+      <Content p={props.course.parts} />
+      <Total p={props.course.parts} />
+    </div>
+  )
+}
+
+const App = (props) => {
+  const course = {
+    name: 'Half Stack -sovelluskehitys',
+    parts: [
+      {
+        name: 'Reactin perusteet',
+        exercises: 10
+      },
+      {
+        name: 'Tiedonvälitys propseilla',
+        exercises: 7
+      },
+      {
+        name: 'Komponenttien tila',
+        exercises: 14
+      }
+    ]
+  }
+  let [counter, set_counter] = useState(0)
+  return (
+    <div>
+      <Course course={course} />
+      <p>{counter}</p>
+      <button onClick={() => set_counter(counter + 1)}>plus</button>
+      <button onClick={() => set_counter(0)}>zero</button>
     </div>
   )
 }
