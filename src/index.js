@@ -1,73 +1,75 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
 
-const Header = props => {
-  return (
-    <div>
-      <h1>{props.header}</h1>
-    </div>
-  )
+const Button = props => {
+  return <button onClick={props.handleClick}>{props.text}</button>
 }
-
-const Content = props => {
-  const content = props.p.map(value => <Part p={value} />)
-  return content
-}
-
-const Total = props => {
-  let tot = 0
-  props.p.map(value => (tot += value.exercises))
-  return (
-    <div>
-      <p>yhteensä {tot} tehtävää</p>
-    </div>
-  )
-}
-
-const Part = props => {
-  return (
-    <div>
-      {props.p.name} {props.p.exercises}
-    </div>
-  )
-}
-
-const Course = props => {
-  return (
-    <div>
-      <Header header={props.course.name} />
-      <Content p={props.course.parts} />
-      <Total p={props.course.parts} />
-    </div>
-  )
-}
-
-const App = (props) => {
-  const course = {
-    name: 'Half Stack -sovelluskehitys',
-    parts: [
-      {
-        name: 'Reactin perusteet',
-        exercises: 10
-      },
-      {
-        name: 'Tiedonvälitys propseilla',
-        exercises: 7
-      },
-      {
-        name: 'Komponenttien tila',
-        exercises: 14
-      }
-    ]
+const Statistics = props => {
+  const good = props.good
+  const neutral = props.neutral
+  const bad = props.bad
+  let total = good + neutral + bad
+  if (total === 0) {
+    return (
+      <div>
+        <p>no feedback has been given, press the buttons to give feedback</p>
+      </div>
+    )
   }
-  let [counter, set_counter] = useState(0)
+
+  let average = (good - bad) / total
+  let positive = good / total
+
   return (
     <div>
-      <Course course={course} />
-      <p>{counter}</p>
-      <button onClick={() => set_counter(counter + 1)}>plus</button>
-      <button onClick={() => set_counter(0)}>zero</button>
+      <table>
+        <tbody>
+          <tr>
+            <td>good: </td>
+            <td>{good}</td>
+          </tr>
+          <tr>
+            <td>neutral: </td>
+            <td>{neutral}</td>
+          </tr>
+          <tr>
+            <td>bad: </td>
+            <td>{bad}</td>
+          </tr>
+          <tr>
+            <td>total: </td>
+            <td>{total}</td>
+          </tr>
+          <tr>
+            <td>average: </td>
+            <td>{average}</td>
+          </tr>
+          <tr>
+            <td>positive: </td>
+            <td>{positive * 100}%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  )
+}
+const App = props => {
+  let [good, set_good] = useState(0)
+  let [neutral, set_neutral] = useState(0)
+  let [bad, set_bad] = useState(0)
+
+  return (
+    <div>
+      <h1>feedback</h1>
+      <div>
+        <Button handleClick={() => set_good(good + 1)} text="good" />
+        <Button handleClick={() => set_neutral(neutral + 1)} text="neutral" />
+        <Button handleClick={() => set_bad(bad + 1)} text="bad" />
+      </div>
+
+      <h1>statistics</h1>
+      <Statistics good={good} bad={bad} neutral={neutral} />
     </div>
   )
 }
